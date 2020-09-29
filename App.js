@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components/native';
 
 const Pagina = styled.SafeAreaView`
@@ -22,13 +22,6 @@ const Cabecalho = styled.Text`
   margin-top: 10px;
   font-size: 30px;
 `;
-const CalcImcBnt = styled.Button`
-  
-`;
-const CalcularView = styled.View`
-  padding-top: 30px;
-  margin-top: 10px;
-`;
 
 const Resultado = styled.Text`
   color: white;
@@ -50,13 +43,17 @@ const App = () => {
   const [categoria, alteraCategoria] = useState('Normal');
   const [cor, alteraCor] = useState('#4caf50');
 
+  useEffect( () => {
+    calcular();
+  }, [peso, altura]);
+
   const calcular = () => {
     const indice = (
-      parceFloat(peso.replace(',', '.')) /
-      (parceFloat(altura.replace(',', '.')) *
-        parceFloat(altura.replace(',', '.')))
+      parseFloat(peso.replace(',', '.')) /
+      (parseFloat(altura.replace(',', '.')) *
+        parseFloat(altura.replace(',', '.')))
     ).toFixed(2);
-    alteraImc(indice);
+    alteraIMC(indice);
     if(indice < 18.5) {
       alteraCategoria('Magreza');
       alteraCor('#2196f3');
@@ -90,10 +87,6 @@ const App = () => {
       value={altura}
       onChangeType={(n) => alteraPeso(n)}
       />
-
-      <CalcularView>
-        <CalcImcBnt title="Calcular" onPress={calcular}/>
-      </CalcularView>
       {imc > 0 && altura !== 0 && (
         <AreaResult cor= {cor} >
           <Resultado> {imc} </Resultado>
