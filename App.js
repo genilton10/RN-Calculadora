@@ -1,131 +1,106 @@
 
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import {Text} from 'react-native';
-
+import React, {useState} from 'react';
+import styled from 'styled-components/native';
 
 const Pagina = styled.SafeAreaView`
   flex: 1;
   align-items: center;
+  margin-top: 20px;
 `;
 
-const Peso = styled.TextInput`
+const Input = styled.TextInput`
   width: 90%;
   height: 50px;
-  font-size: 18px;
+  font-size: 25px;
   background-color: #eee;
-  margin-top: 10px;
-  padding: 10px;
-`;
-const Altura = styled.TextInput`
-  width: 90%;
-  height: 50px;
-  font-size: 18px;
-  background-color: #eee;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 20px;
+  border-radius: 10px;
   padding: 10px;
 `;
 
 const Cabecalho = styled.Text`
   margin-top: 10px;
-  font-size: 24px;
+  font-size: 30px;
 `;
 const CalcImcBnt = styled.Button`
   
 `;
-const AreaResult = styled.View`
-  width:95%;
+const CalcularView = styled.View`
+  padding-top: 30px;
   margin-top: 10px;
-  background-color: #eee;
+`;
+
+const Resultado = styled.Text`
+  color: white;
+  font-size: 18px;
+`;
+
+const AreaResult = styled.View`
+  margin-top: 30px;
+  background-color: ${(props) => props.cor};
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 20px;
   border-radius:10px;
 `;
-const TituloResult = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
+const App = () => {
+  const [altura, alteraAltura] = useState('');
+  const [peso, alteraPeso] = useState('');
+  const [imc, alteraIMC] = useState(0);
+  const [categoria, alteraCategoria] = useState('Normal');
+  const [cor, alteraCor] = useState('#4caf50');
 
-`;
-const Magreza = styled.Text`
-  font-size: 18px;
-  margin-bottom: 20px;
-  margin-top:20px;
-  color: #3ADF00;
-`; 
-
-const Normal = styled.Text`
-  font-size: 18px;
-  margin-bottom: 20px;
-  margin-top:20px;
-  color: #0B610B;
-`;
-const Sobrepeso = styled.Text`
-  font-size: 18px;
-  margin-bottom: 20px;
-  margin-top:20px;
-  color: #F4FA58;
-`;
-const Obsidade = styled.Text`
-  font-size: 18px;
-  margin-bottom: 20px;
-  margin-top:20px;
-  color: #FFBF00;
-`;
-
-const ObsidadeGrave = styled.Text`
-  font-size: 18px;
-  margin-bottom: 20px;
-  margin-top:20px;
-  color: #FF0000;
-`;
-
-export default () => {
-
-  const [peso, alteraPeso] = useState('40');
-
-  const [altura, alteraAltuta] = useState('1.60');
-  
-
+  const calcular = () => {
+    const indice = (
+      parceFloat(peso.replace(',', '.')) /
+      (parceFloat(altura.replace(',', '.')) *
+        parceFloat(altura.replace(',', '.')))
+    ).toFixed(2);
+    alteraImc(indice);
+    if(indice < 18.5) {
+      alteraCategoria('Magreza');
+      alteraCor('#2196f3');
+    } else if (indice <= 24.9) {
+      alteraCategoria('Normal');
+      alteraCor('#4caf50');
+    } else if (indice <= 29.9) {
+      alteraCategoria('Sobrepeso');
+      alteraCor('#2196f3');
+    } else if (indice <= 39.9) {
+      alteraCategoria('Obesidade');
+      alteraCor('#ff9800');
+    } else if (indice > 40) {
+      alteraCategoria('Obesidade Grave');
+      alteraCor('#f44336');
+    }
+  };
 
   return (
     <Pagina>
       <Cabecalho>IMC Fácil</Cabecalho>
-      <Peso placeholder="Quanto você pesa ?" kyboardType="numeric" value={peso} onChangeType={(valorPeso) => alteraPeso(valorPeso)}/>
-      <Altura placeholder="Qual sua altura ?" kyboardType="numeric" value={altura} onChangeType={(valorAltura) => alteraAltuta(valorAltura)}/>
-      <CalcImcBnt title="Calcular IMC" color="green"/>
-      { peso / (altura * altura) < 18.5 &&
-         <AreaResult>
-         <TituloResult> IMC   Classificação   Obsidade(Grau)</TituloResult>
-         <Magreza > {parseFloat( peso / (altura * altura )).toFixed(2)}         Magreza              0 </Magreza>
-       </AreaResult>
-      }
-      {(peso / (altura * altura)) > 18.5 && (peso / (altura * altura)) < 24.90 &&
-         <AreaResult>
-         <TituloResult> IMC   Classificação   Obsidade(Grau)</TituloResult>
-         <Normal > {parseFloat( peso / (altura * altura )).toFixed(2)}         Normal             0 </Normal>
-       </AreaResult>
-      }
-      {(peso / (altura * altura))> 25.0 && (peso / (altura * altura)) < 29.90 &&
-         <AreaResult>
-         <TituloResult> IMC   Classificação   Obsidade(Grau)</TituloResult>
-         <Sobrepeso > {parseFloat( peso / (altura * altura )).toFixed(2)}       Sobrepeso             I </Sobrepeso>
-       </AreaResult>
-      }
-      {(peso / (altura * altura))> 30.0 && (peso / (altura * altura)) < 39.90 &&
-         <AreaResult>
-         <TituloResult> IMC   Classificação   Obsidade(Grau)</TituloResult>
-         <Obsidade > {parseFloat( peso / (altura * altura )).toFixed(2)}       Obsidade             II </Obsidade>
-       </AreaResult>
-      }
-      { (peso / (altura * altura)) > 40.0 &&
-         <AreaResult>
-         <TituloResult> IMC   Classificação   Obsidade(Grau)</TituloResult>
-         <ObsidadeGrave > {parseFloat( peso / (altura * altura )).toFixed(2)}      ObsidadeGrave      III </ObsidadeGrave>
-       </AreaResult>
-      }
-  
+
+      <Input placeholder="Peso"
+      kyboardType="numeric"
+      value={peso}
+      onChangeType={(n) => alteraPeso(n)}
+      />
+
+      <Input placeholder="Altura"
+      kyboardType="numeric"
+      value={altura}
+      onChangeType={(n) => alteraPeso(n)}
+      />
+
+      <CalcularView>
+        <CalcImcBnt title="Calcular" onPress={calcular}/>
+      </CalcularView>
+      {imc > 0 && altura !== 0 && (
+        <AreaResult cor= {cor} >
+          <Resultado> {imc} </Resultado>
+          <Resultado> {categoria} </Resultado>
+        </AreaResult>
+      )}
     </Pagina>
   );
 };
+export default App;
